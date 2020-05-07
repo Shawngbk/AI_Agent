@@ -1,4 +1,27 @@
 # Starter pipeline
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'Microsoft Azure 内部消耗 (c2d97822-2c01-43a7-9815-40247ee33d9a)'
+    scriptType: 'ps'
+    scriptLocation: 'inlineScript'
+    inlineScript: |
+      $apiVersion = "2016-03-31"
+      $resourceGroupName = "shawngbk"
+      $accountName = "tableapi"
+      $tableName = "test"
+      $tableThroughputResourceName = $accountName + "/table/" + $tableName + "/throughput"
+      $tableThroughputResourceType = "Microsoft.DocumentDb/databaseAccounts/apis/tables/settings"
+      $throughput = 500
+      $tableProperties = @{
+          "resource"=@{"throughput"=$throughput}
+      } 
+      $PSDefaultParameterValues["Disabled"]=$true
+      
+      Set-AzResource `
+          -ResourceType $tableThroughputResourceType -ApiVersion $apiVersion `
+          -ResourceGroupName $resourceGroupName -Name $tableThroughputResourceName `
+          -Properties $tableProperties `
+          -Force
 # Start with a minimal pipeline that you can customize to build and deploy your code.
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
